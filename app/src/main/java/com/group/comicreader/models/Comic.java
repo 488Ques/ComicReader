@@ -7,10 +7,16 @@ public class Comic {
     private String author;
     private String genre;
     private String imageUrl; // The URL of the cover image for the comic
+    private int cover;
     private List<Chapter> chapters;
 
     public Comic() {
         // Default constructor required for calls to DataSnapshot.getValue(Comic.class)
+    }
+
+    public Comic(String title, int cover) {
+        this.title = title;
+        this.cover = cover;
     }
 
     public Comic(String title, String author, String genre, String imageUrl, List<Chapter> chapters) {
@@ -60,5 +66,13 @@ public class Comic {
 
     public void setChapters(List<Chapter> chapters) {
         this.chapters = chapters;
+    }
+
+    public int getCover() {
+        return cover;
+    }
+
+    public void setCover(int cover) {
+        this.cover = cover;
     }
 }
