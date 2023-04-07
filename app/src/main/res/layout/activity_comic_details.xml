@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Comic details section -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/image_details_cover"
+            android:layout_width="120dp"
+            android:layout_height="160dp"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/text_details_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/image_details_cover"
+            android:text="Comic Title"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/text_details_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_details_title"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/image_details_cover"
+            android:text="Author"
+            android:textColor="@color/gray"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/text_details_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_details_author"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/image_details_cover"
+            android:text="Comic description"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <!-- Chapter list section -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_details_chapters"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>
