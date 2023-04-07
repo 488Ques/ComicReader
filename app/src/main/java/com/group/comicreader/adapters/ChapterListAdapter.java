@@ -1,5 +1,6 @@
 package com.group.comicreader.adapters;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,16 +9,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.group.comicreader.ComicReaderActivity;
 import com.group.comicreader.R;
 import com.group.comicreader.models.Chapter;
 
 import java.util.List;
 
 public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.ViewHolder> {
-    private List<Chapter> mChapters;
+    private List<Chapter> chaptersList;
 
-    public ChapterListAdapter(List<Chapter> chapters) {
-        mChapters = chapters;
+    public ChapterListAdapter(List<Chapter> chapterList) {
+        chaptersList = chapterList;
     }
 
     @NonNull
@@ -30,7 +32,7 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Chapter chapter = mChapters.get(position);
+        Chapter chapter = chaptersList.get(position);
 
         holder.mChapterNumber.setText(String.valueOf(chapter.getChapterNumber()));
         holder.mChapterTitle.setText(chapter.getTitle());
@@ -39,10 +41,10 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
 
     @Override
     public int getItemCount() {
-        return mChapters.size();
+        return chaptersList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView mChapterTitle;
         public TextView mChapterNumber;
@@ -54,6 +56,14 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
             mChapterTitle = itemView.findViewById(R.id.text_chapter_title);
             mChapterNumber = itemView.findViewById(R.id.text_chapter_number);
             mChapterReleaseDate = itemView.findViewById(R.id.text_chapter_release_date);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(view.getContext(), ComicReaderActivity.class);
+            view.getContext().startActivity(intent);
         }
     }
 }
