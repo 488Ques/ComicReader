@@ -4,16 +4,14 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuProvider;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -25,11 +23,8 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.group.comicreader.adapters.ComicListAdapter;
 import com.group.comicreader.models.Comic;
-
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+
+        mAuth = FirebaseAuth.getInstance();
         signInLauncher = registerForActivityResult(
                 new FirebaseAuthUIActivityResultContract(),
                 new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>() {
@@ -57,15 +56,11 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        mAuth = FirebaseAuth.getInstance();
-
         if (shouldStartSignIn()) {
             startSignIn();
         }
 
         recycler_comic_list = findViewById(R.id.recycler_comic_list);
-        recycler_comic_list.setHasFixedSize(true);
-        recycler_comic_list.setLayoutManager(new GridLayoutManager(this, 2));
 
         comicList = new ArrayList<>();
         comicList.add(new Comic("Chainsaw Man", R.drawable.chainsaw_man));
