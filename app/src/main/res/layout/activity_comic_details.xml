@@ -29,9 +29,9 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/image_details_cover"
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/image_details_cover"
             android:orientation="vertical">
 
             <TextView
@@ -74,6 +74,15 @@
         android:text="Comic description"
         android:textColor="@color/black"
         android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/button_details_show_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Show more"
+        android:textColor="@color/black"
+        android:textSize="14sp" />
 
     <!-- Chapter list section -->
     <androidx.recyclerview.widget.RecyclerView
