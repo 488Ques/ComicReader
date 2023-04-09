@@ -2,8 +2,7 @@ package com.group.comicreader;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.MenuItem;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -115,5 +114,11 @@ public class ComicDetailsActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         chaptersRecyclerView.setLayoutManager(layoutManager);
         chaptersRecyclerView.setAdapter(chapterListAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_comic_details, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }
