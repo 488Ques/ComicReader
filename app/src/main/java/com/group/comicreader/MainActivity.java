@@ -42,9 +42,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Set up toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
+        // Set up authentication stuff
         mAuth = FirebaseAuth.getInstance();
         signInLauncher = registerForActivityResult(
                 new FirebaseAuthUIActivityResultContract(),
@@ -56,23 +58,27 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
+        // Start signing in if eligible
         if (shouldStartSignIn()) {
             startSignIn();
         }
 
+        // Add sample data
         recycler_comic_list = findViewById(R.id.recycler_comic_list);
-
         comicList = new ArrayList<>();
         comicList.add(new Comic("Chainsaw Man", R.drawable.chainsaw_man));
         comicList.add(new Comic("Fire Punch", R.drawable.fire_punch));
         comicList.add(new Comic("Goodbye Eri", R.drawable.goodbye_eri));
         comicList.add(new Comic("Sakamoto Days", R.drawable.sakamoto_days));
 
+        // Set up adapter and recycler
         comicListAdapter = new ComicListAdapter(comicList);
         recycler_comic_list.setAdapter(comicListAdapter);
     }
 
+    // Launch sign in sequence
     private void startSignIn() {
+        // Only use email for authentication
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build()
         );
@@ -86,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         signInLauncher.launch(signInIntent);
     }
 
+    // Handle results of sign in
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         IdpResponse response = result.getIdpResponse();
 
@@ -101,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Check if eligible for signing out
     private boolean shouldStartSignIn() {
         return mAuth.getCurrentUser() == null;
     }
