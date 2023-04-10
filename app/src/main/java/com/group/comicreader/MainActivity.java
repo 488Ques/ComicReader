@@ -21,10 +21,16 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.group.comicreader.adapters.ComicListAdapter;
 import com.group.comicreader.models.Comic;
+import com.group.comicreader.models.ComicListItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,9 +39,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recycler_comic_list;
     private ComicListAdapter comicListAdapter;
-    private List<Comic> comicList;
+    private List<ComicListItem> comicList;
     private ActivityResultLauncher<Intent> signInLauncher;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore mFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
+        // Set up Firestore
+        mFirestore = FirebaseFirestore.getInstance();
+
         // Start signing in if eligible
         if (shouldStartSignIn()) {
             startSignIn();
@@ -66,10 +76,24 @@ public class MainActivity extends AppCompatActivity {
         // Add sample data
         recycler_comic_list = findViewById(R.id.recycler_comic_list);
         comicList = new ArrayList<>();
-        comicList.add(new Comic("Chainsaw Man", R.drawable.chainsaw_man));
-        comicList.add(new Comic("Fire Punch", R.drawable.fire_punch));
-        comicList.add(new Comic("Goodbye Eri", R.drawable.goodbye_eri));
-        comicList.add(new Comic("Sakamoto Days", R.drawable.sakamoto_days));
+//        comicList.add(new Comic("Chainsaw Man", R.drawable.chainsaw_man));
+//        comicList.add(new Comic("Fire Punch", R.drawable.fire_punch));
+//        comicList.add(new Comic("Goodbye Eri", R.drawable.goodbye_eri));
+//        comicList.add(new Comic("Sakamoto Days", R.drawable.sakamoto_days));
+
+        mFirestore.collection("Comic")
+                .orderBy("creation_date", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            String title = documentSnapshot.getString("title");
+                            String imageUrl = documentSnapshot.getString("imageUrl");
+                            comicList.add(new ComicListItem(title, imageUrl));
+                        }
+                    }
+                });
 
         // Set up adapter and recycler
         comicListAdapter = new ComicListAdapter(comicList);

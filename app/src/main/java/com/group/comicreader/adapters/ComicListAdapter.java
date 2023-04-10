@@ -13,14 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.group.comicreader.ComicDetailsActivity;
 import com.group.comicreader.R;
 import com.group.comicreader.models.Comic;
+import com.group.comicreader.models.ComicListItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class ComicListAdapter extends RecyclerView.Adapter<ComicListAdapter.ViewHolder> {
-    private List<Comic> comicList;
+    private List<ComicListItem> comicList;
 
-    public ComicListAdapter(List<Comic> comicList) {
+    public ComicListAdapter(List<ComicListItem> comicList) {
         this.comicList = comicList;
     }
 
@@ -34,9 +35,9 @@ public class ComicListAdapter extends RecyclerView.Adapter<ComicListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Comic comic = comicList.get(position);
+        ComicListItem comic = comicList.get(position);
         holder.comicTitle.setText(comic.getTitle());
-        Picasso.get().load(comic.getCover()).into(holder.comicCover);
+        Picasso.get().load(comic.getImageUrl()).into(holder.comicCover);
     }
 
     @Override

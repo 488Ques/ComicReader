@@ -1,11 +1,12 @@
 package com.group.comicreader.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Comic {
     private String title;
     private String author;
-    private String genre;
+    private ArrayList<String> genres;
     private String imageUrl; // The URL of the cover image for the comic
     private int cover;
     private List<Chapter> chapters;
@@ -19,10 +20,10 @@ public class Comic {
         this.cover = cover;
     }
 
-    public Comic(String title, String author, String genre, String imageUrl, List<Chapter> chapters) {
+    public Comic(String title, String author, ArrayList<String> genres, String imageUrl, List<Chapter> chapters) {
         this.title = title;
         this.author = author;
-        this.genre = genre;
+        this.genres = genres;
         this.imageUrl = imageUrl;
         this.chapters = chapters;
     }
@@ -42,14 +43,6 @@ public class Comic {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
     }
 
     public String getImageUrl() {
@@ -74,5 +67,13 @@ public class Comic {
 
     public void setCover(int cover) {
         this.cover = cover;
+    }
+
+    public ArrayList<String> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(ArrayList<String> genres) {
+        this.genres = genres;
     }
 }
