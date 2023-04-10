@@ -5,7 +5,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
@@ -25,11 +24,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.group.comicreader.adapters.ComicListAdapter;
-import com.group.comicreader.models.Comic;
 import com.group.comicreader.models.ComicListItem;
 
 import java.util.ArrayList;
@@ -73,31 +70,28 @@ public class MainActivity extends AppCompatActivity {
             startSignIn();
         }
 
-        // Add sample data
+        // Find views
         recycler_comic_list = findViewById(R.id.recycler_comic_list);
-        comicList = new ArrayList<>();
-//        comicList.add(new Comic("Chainsaw Man", R.drawable.chainsaw_man));
-//        comicList.add(new Comic("Fire Punch", R.drawable.fire_punch));
-//        comicList.add(new Comic("Goodbye Eri", R.drawable.goodbye_eri));
-//        comicList.add(new Comic("Sakamoto Days", R.drawable.sakamoto_days));
 
+        // Query data
+        comicList = new ArrayList<>();
         mFirestore.collection("Comic")
-                .orderBy("creation_date", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        // Populate comicList
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                             String title = documentSnapshot.getString("title");
                             String imageUrl = documentSnapshot.getString("imageUrl");
                             comicList.add(new ComicListItem(title, imageUrl));
                         }
+
+                        // Set up adapter and recycler
+                        comicListAdapter = new ComicListAdapter(comicList);
+                        recycler_comic_list.setAdapter(comicListAdapter);
                     }
                 });
-
-        // Set up adapter and recycler
-        comicListAdapter = new ComicListAdapter(comicList);
-        recycler_comic_list.setAdapter(comicListAdapter);
     }
 
     // Launch sign in sequence
