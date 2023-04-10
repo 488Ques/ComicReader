@@ -17,14 +17,16 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_comic_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginTop="8dp"
+        android:layout_weight="1"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="3" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:background="@color/bottom_nav_bg"
         app:menu="@menu/bottomnav_main" />
 
 </LinearLayout>
