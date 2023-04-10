@@ -6,23 +6,19 @@ import java.util.List;
 public class Comic {
     private String title;
     private String author;
+    private String description;
     private ArrayList<String> genres;
     private String imageUrl; // The URL of the cover image for the comic
-    private int cover;
     private List<Chapter> chapters;
 
     public Comic() {
         // Default constructor required for calls to DataSnapshot.getValue(Comic.class)
     }
 
-    public Comic(String title, int cover) {
-        this.title = title;
-        this.cover = cover;
-    }
-
-    public Comic(String title, String author, ArrayList<String> genres, String imageUrl, List<Chapter> chapters) {
+    public Comic(String title, String author, String description, ArrayList<String> genres, String imageUrl, List<Chapter> chapters) {
         this.title = title;
         this.author = author;
+        this.description = description;
         this.genres = genres;
         this.imageUrl = imageUrl;
         this.chapters = chapters;
@@ -61,19 +57,19 @@ public class Comic {
         this.chapters = chapters;
     }
 
-    public int getCover() {
-        return cover;
-    }
-
-    public void setCover(int cover) {
-        this.cover = cover;
-    }
-
     public ArrayList<String> getGenres() {
         return genres;
     }
 
     public void setGenres(ArrayList<String> genres) {
         this.genres = genres;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
