@@ -5,13 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.group.comicreader.adapters.ComicPagerAdapter;
@@ -23,6 +26,7 @@ public class ComicReaderActivity extends AppCompatActivity {
 
     private ViewPager2 viewPager;
     private FirebaseFirestore firestore;
+    private FirebaseAuth auth;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -38,6 +42,9 @@ public class ComicReaderActivity extends AppCompatActivity {
 
         // Set up Firestore
         firestore = FirebaseFirestore.getInstance();
+
+        // Set up Authentication
+        auth = FirebaseAuth.getInstance();
 
         // Set up toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_reader);
@@ -72,9 +79,19 @@ public class ComicReaderActivity extends AppCompatActivity {
                 });
     }
 
+    private void favoriteComic() {
+        String uid = auth.getCurrentUser().getUid();
+        firestore.collection("User").document(uid);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_comic_reader, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 }

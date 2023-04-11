@@ -22,7 +22,7 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
     private String comicID;
 
     public ChapterListAdapter(List<Chapter> chapterList, String comicID) {
-        chaptersList = chapterList;
+        this.chaptersList = chapterList;
         this.comicID = comicID;
     }
 

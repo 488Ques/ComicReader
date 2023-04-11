@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <!-- Comic cover image view -->
+    <ImageView
+        android:id="@+id/image_favorite_cover"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:scaleType="centerCrop" />
+
+    <!-- Comic title and author -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- Comic title text view -->
+        <TextView
+            android:id="@+id/text_favorite_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Comic Title"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Comic author text view -->
+        <TextView
+            android:id="@+id/text_favorite_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Comic Author"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</LinearLayout>
