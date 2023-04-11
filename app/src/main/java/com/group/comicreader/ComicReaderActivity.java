@@ -1,32 +1,28 @@
 package com.group.comicreader;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
+import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.group.comicreader.adapters.ComicPagerAdapter;
-import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ComicReaderActivity extends AppCompatActivity {
+    final String TAG = "ComicReaderActivity";
 
     private ViewPager2 viewPager;
-    private boolean mIsFullscreen = false;
+    private FirebaseFirestore firestore;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -34,57 +30,51 @@ public class ComicReaderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comic_reader);
 
-        // Get comic data from intent
-        // Intent intent = getIntent();
-        // Comic comic = intent.getParcelableExtra("comic");
+        // Get comicID and chapterID
+        Intent intent = getIntent();
+        String comicID = intent.getStringExtra("comicID");
+        String chapterID = intent.getStringExtra("chapterID");
+        Log.d(TAG, "onCreate: chapterID of comic " + comicID + " is " + chapterID);
 
-        // Set toolbar title to comic title
+        // Set up Firestore
+        firestore = FirebaseFirestore.getInstance();
+
+        // Set up toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_reader);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Chapter 1");
 
-        // Sample data
-        List<Integer> pages = new ArrayList<>();
-        pages.add(R.drawable.chainsaw_man);
-        pages.add(R.drawable.fire_punch);
+        // Show back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // Handle click event of back button
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
-        // Set up ViewPager2
-        viewPager = findViewById(R.id.pager_reader_slider);
-        ComicPagerAdapter adapter = new ComicPagerAdapter(pages);
-        viewPager.setAdapter(adapter);
+        firestore.collection("/Comic/" + comicID + "/Chapter").document(chapterID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        List<String> imageUrls = (List<String>) documentSnapshot.get("imageUrls");
+                        String title = documentSnapshot.getString("title");
 
+                        // Set title of toolbar
+                        getSupportActionBar().setTitle(title);
 
-//        viewPager.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                    Log.d("ComicReader", "TOUCHED DOWN");
-//                    float x = event.getX();
-//                    int screenWidth = getResources().getDisplayMetrics().widthPixels;
-//
-//                    if (x < screenWidth / 2) {
-//                        viewPager.setCurrentItem(viewPager.getCurrentItem() - 1, true);
-//                    } else {
-//                        viewPager.setCurrentItem(viewPager.getCurrentItem() + 2, true);
-//                    }
-//                }
-//                return false;
-//            }
-//        });
-
-        // Hide UI elements when tapping middle of screen
-
+                        // Set up ViewPager2
+                        viewPager = findViewById(R.id.pager_reader_slider);
+                        ComicPagerAdapter adapter = new ComicPagerAdapter(imageUrls);
+                        viewPager.setAdapter(adapter);
+                    }
+                });
     }
 
-    private void toggleFullscreen() {
-        mIsFullscreen = !mIsFullscreen;
-        Window window = getWindow();
-        if (mIsFullscreen) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getSupportActionBar().hide();
-        } else {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getSupportActionBar().show();
-        }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_comic_reader, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

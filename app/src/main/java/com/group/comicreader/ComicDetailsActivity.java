@@ -128,11 +128,11 @@ public class ComicDetailsActivity extends AppCompatActivity {
                             Date creationDate = documentSnapshot.getTimestamp("creationDate").toDate();
 
                             Log.d(TAG, "onSuccess: ID of chapter " + chapterNumber + " is " + id);
-                            chapters.add(new Chapter(chapterNumber, title, creationDate));
+                            chapters.add(new Chapter(id, chapterNumber, title, creationDate));
                         }
 
                         // Set up chapters recycler view
-                        chapterListAdapter = new ChapterListAdapter(chapters);
+                        chapterListAdapter = new ChapterListAdapter(chapters, comicID);
                         chaptersRecyclerView.setAdapter(chapterListAdapter);
                     }
                 });

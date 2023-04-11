@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Chapter {
+    private String id;
     private int chapterNumber;
     private Date creationDate;
     private String title;
@@ -21,7 +22,8 @@ public class Chapter {
         this.imageUrls = imageUrls;
     }
 
-    public Chapter(int chapterNumber, String title, Date creationDate) {
+    public Chapter(String id, int chapterNumber, String title, Date creationDate) {
+        this.id = id;
         this.chapterNumber = chapterNumber;
         this.creationDate = creationDate;
         this.title = title;
@@ -58,5 +60,13 @@ public class Chapter {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

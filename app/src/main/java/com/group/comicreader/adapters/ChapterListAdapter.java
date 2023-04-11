@@ -19,9 +19,11 @@ import java.util.List;
 
 public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.ViewHolder> {
     private List<Chapter> chaptersList;
+    private String comicID;
 
-    public ChapterListAdapter(List<Chapter> chapterList) {
+    public ChapterListAdapter(List<Chapter> chapterList, String comicID) {
         chaptersList = chapterList;
+        this.comicID = comicID;
     }
 
     @NonNull
@@ -45,6 +47,8 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
         String formattedDate = sdf.format(creationDate);
 
         holder.mChapterReleaseDate.setText(formattedDate);
+
+        holder.chapterID = chapter.getId();
     }
 
     @Override
@@ -57,6 +61,7 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
         public TextView mChapterTitle;
         public TextView mChapterNumber;
         public TextView mChapterReleaseDate;
+        public String chapterID;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,6 +76,8 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(view.getContext(), ComicReaderActivity.class);
+            intent.putExtra("chapterID", chapterID);
+            intent.putExtra("comicID", comicID);
             view.getContext().startActivity(intent);
         }
     }

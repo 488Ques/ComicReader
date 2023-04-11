@@ -15,10 +15,10 @@ import java.util.List;
 
 public class ComicPagerAdapter extends RecyclerView.Adapter<ComicPagerAdapter.ViewHolder> {
 
-    private List<Integer> pages;
-
-    public ComicPagerAdapter(List<Integer> pages) {
-        this.pages = pages;
+    private List<String> imageUrls;
+    
+    public ComicPagerAdapter(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
     }
 
     @NonNull
@@ -31,12 +31,12 @@ public class ComicPagerAdapter extends RecyclerView.Adapter<ComicPagerAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(pages.get(position));
+        holder.bind(imageUrls.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return pages.size();
+        return imageUrls.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -48,7 +48,7 @@ public class ComicPagerAdapter extends RecyclerView.Adapter<ComicPagerAdapter.Vi
             imageView = itemView.findViewById(R.id.image_comic_page);
         }
 
-        public void bind(int imageResId) {
+        public void bind(String imageResId) {
             Picasso.get().load(imageResId).into(imageView);
         }
     }
