@@ -38,6 +38,7 @@ public class ComicListAdapter extends RecyclerView.Adapter<ComicListAdapter.View
         ComicListItem comic = comicList.get(position);
         holder.comicTitle.setText(comic.getTitle());
         Picasso.get().load(comic.getImageUrl()).into(holder.comicCover);
+        holder.comicID = comic.getId();
     }
 
     @Override
@@ -48,6 +49,7 @@ public class ComicListAdapter extends RecyclerView.Adapter<ComicListAdapter.View
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView comicCover;
         public TextView comicTitle;
+        public String comicID;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -61,6 +63,7 @@ public class ComicListAdapter extends RecyclerView.Adapter<ComicListAdapter.View
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(view.getContext(), ComicDetailsActivity.class);
+            intent.putExtra("comicID", comicID);
             view.getContext().startActivity(intent);
         }
     }

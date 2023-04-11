@@ -1,7 +1,9 @@
 package com.group.comicreader;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -16,25 +18,45 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.group.comicreader.adapters.ChapterListAdapter;
 import com.group.comicreader.models.Chapter;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ComicDetailsActivity extends AppCompatActivity {
+    final String TAG = "ComicDetailsActivity";
     final int MAX_LINES = 3;
 
     private RecyclerView chaptersRecyclerView;
     private ChapterListAdapter chapterListAdapter;
+    private FirebaseFirestore firestore;
+
+//    TextView titleTextView;
+//    TextView authorTextView;
+//    TextView genresTextView;
+    TextView descriptionTextView;
+    Button showMoreButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comic_details);
+
+        // Get comicID
+        Intent intent = getIntent();
+        String comicID = intent.getStringExtra("comicID");
+        Log.d(TAG, "Comic ID is " + comicID);
+
+        // Set up Firestore
+        firestore = FirebaseFirestore.getInstance();
 
         // Set up toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_details);
@@ -53,19 +75,38 @@ public class ComicDetailsActivity extends AppCompatActivity {
         TextView titleTextView = findViewById(R.id.text_details_title);
         TextView authorTextView = findViewById(R.id.text_details_author);
         TextView genresTextView = findViewById(R.id.text_details_genres);
-        TextView descriptionTextView = findViewById(R.id.text_details_description);
+        descriptionTextView = findViewById(R.id.text_details_description);
 
-        Button showMoreButton = findViewById(R.id.button_details_show_more);
+        showMoreButton = findViewById(R.id.button_details_show_more);
         ImageView coverImageView = findViewById(R.id.image_details_cover);
         chaptersRecyclerView = findViewById(R.id.recycler_details_chapters);
 
         // Set comic details
-        titleTextView.setText("Chainsaw Man");
-        authorTextView.setText("FUJIMOTO Tatsuki");
-        genresTextView.setText("Action, Comedy, Drama, Horror, Mature, Shounen, Supernatural");
-        descriptionTextView.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla justo sit amet nisi malesuada, nec faucibus magna venenatis." +
-                "nec faucibus magna venenatis. nec faucibus magna venenatis. nec faucibus magna venenatis.");
-        Picasso.get().load(R.drawable.chainsaw_man).into(coverImageView);
+        DocumentReference docRef = firestore.collection("Comic").document(comicID);
+
+        docRef.get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String title = documentSnapshot.getString("title");
+                        String author = documentSnapshot.getString("author");
+                        String description = documentSnapshot.getString("description");
+                        String imageUrl = documentSnapshot.getString("imageUrl");
+                        List<String> genres = (List<String>) documentSnapshot.get("genres");
+
+                        titleTextView.setText(title);
+                        authorTextView.setText(author);
+                        genresTextView.setText(TextUtils.join(", ", genres));
+                        descriptionTextView.setText(description);
+                        Picasso.get().load(imageUrl).into(coverImageView);
+                    }
+                })
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        showMoreIfOk();
+                    }
+                });
 
         // Add sample chapters
         List<Chapter> chapters = new ArrayList<>();
@@ -73,7 +114,16 @@ public class ComicDetailsActivity extends AppCompatActivity {
         chapters.add(new Chapter(2, "Chapter 2 Title", "2022-04-15"));
         chapters.add(new Chapter(3, "Chapter 3 Title", "2022-05-01"));
 
-        // Show or hide Show more button depending on whether description text is longer than 3 lines
+
+        // Set up chapters recycler view
+        chapterListAdapter = new ChapterListAdapter(chapters);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        chaptersRecyclerView.setLayoutManager(layoutManager);
+        chaptersRecyclerView.setAdapter(chapterListAdapter);
+    }
+
+    // Show or hide Show more button depending on whether description text is longer than 3 lines
+    private void showMoreIfOk() {
         ViewTreeObserver observer = descriptionTextView.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -108,12 +158,6 @@ public class ComicDetailsActivity extends AppCompatActivity {
                 descriptionTextView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
-
-        // Set up chapters recycler view
-        chapterListAdapter = new ChapterListAdapter(chapters);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        chaptersRecyclerView.setLayoutManager(layoutManager);
-        chaptersRecyclerView.setAdapter(chapterListAdapter);
     }
 
     @Override

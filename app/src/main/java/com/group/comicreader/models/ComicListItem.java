@@ -1,10 +1,12 @@
 package com.group.comicreader.models;
 
 public class ComicListItem {
+    private String id;
     private String title;
     private String imageUrl;
 
-    public ComicListItem(String title, String imageUrl) {
+    public ComicListItem(String id, String title, String imageUrl) {
+        this.id = id;
         this.title = title;
         this.imageUrl = imageUrl;
     }
@@ -15,5 +17,9 @@ public class ComicListItem {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public String getId() {
+        return id;
     }
 }

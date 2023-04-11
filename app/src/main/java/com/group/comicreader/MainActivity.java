@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -82,9 +83,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         // Populate comicList
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            String id = documentSnapshot.getId();
                             String title = documentSnapshot.getString("title");
                             String imageUrl = documentSnapshot.getString("imageUrl");
-                            comicList.add(new ComicListItem(title, imageUrl));
+                            comicList.add(new ComicListItem(id, title, imageUrl));
                         }
 
                         // Set up adapter and recycler

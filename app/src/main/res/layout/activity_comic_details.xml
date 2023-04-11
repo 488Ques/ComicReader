@@ -66,29 +66,44 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/text_details_description"
+    <!-- In case description pushes chapter list out of view -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:text="Comic description"
-        android:textColor="@color/black"
-        android:textSize="16sp" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/button_details_show_more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Show more"
-        android:textColor="@color/black"
-        android:textSize="14sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <!-- Chapter list section -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_details_chapters"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+            <!-- Description section -->
+            <TextView
+                android:id="@+id/text_details_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Comic description"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/button_details_show_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Show more"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <!-- Chapter list section -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_details_chapters"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
