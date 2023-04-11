@@ -35,15 +35,16 @@ public class ComicDetailsActivity extends AppCompatActivity {
     final String TAG = "ComicDetailsActivity";
     final int MAX_LINES = 3;
 
-    private RecyclerView chaptersRecyclerView;
     private ChapterListAdapter chapterListAdapter;
     private FirebaseFirestore firestore;
 
-//    TextView titleTextView;
-//    TextView authorTextView;
-//    TextView genresTextView;
-    TextView descriptionTextView;
-    Button showMoreButton;
+    private TextView titleTextView;
+    private TextView authorTextView;
+    private TextView genresTextView;
+    private TextView descriptionTextView;
+    private Button showMoreButton;
+    private ImageView coverImageView;
+    private RecyclerView chaptersRecyclerView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,8 +63,9 @@ public class ComicDetailsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_details);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-        // Show back button and handle its click event
+        // Show back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // Handle click event of back button
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,18 +74,18 @@ public class ComicDetailsActivity extends AppCompatActivity {
         });
 
         // Find views
-        TextView titleTextView = findViewById(R.id.text_details_title);
-        TextView authorTextView = findViewById(R.id.text_details_author);
-        TextView genresTextView = findViewById(R.id.text_details_genres);
+        titleTextView = findViewById(R.id.text_details_title);
+        authorTextView = findViewById(R.id.text_details_author);
+        genresTextView = findViewById(R.id.text_details_genres);
         descriptionTextView = findViewById(R.id.text_details_description);
 
         showMoreButton = findViewById(R.id.button_details_show_more);
-        ImageView coverImageView = findViewById(R.id.image_details_cover);
+        coverImageView = findViewById(R.id.image_details_cover);
         chaptersRecyclerView = findViewById(R.id.recycler_details_chapters);
 
-        // Set comic details
+        // Find ref of comic
         DocumentReference docRef = firestore.collection("Comic").document(comicID);
-
+        // Query for comic details
         docRef.get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -94,6 +96,7 @@ public class ComicDetailsActivity extends AppCompatActivity {
                         String imageUrl = documentSnapshot.getString("imageUrl");
                         List<String> genres = (List<String>) documentSnapshot.get("genres");
 
+                        // Set comic details
                         titleTextView.setText(title);
                         authorTextView.setText(author);
                         genresTextView.setText(TextUtils.join(", ", genres));
@@ -113,7 +116,6 @@ public class ComicDetailsActivity extends AppCompatActivity {
         chapters.add(new Chapter(1, "Chapter 1 Title", "2022-04-01"));
         chapters.add(new Chapter(2, "Chapter 2 Title", "2022-04-15"));
         chapters.add(new Chapter(3, "Chapter 3 Title", "2022-05-01"));
-
 
         // Set up chapters recycler view
         chapterListAdapter = new ChapterListAdapter(chapters);
