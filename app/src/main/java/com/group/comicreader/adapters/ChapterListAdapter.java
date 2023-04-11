@@ -13,6 +13,8 @@ import com.group.comicreader.ComicReaderActivity;
 import com.group.comicreader.R;
 import com.group.comicreader.models.Chapter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.ViewHolder> {
@@ -36,7 +38,13 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
 
         holder.mChapterNumber.setText(String.valueOf(chapter.getChapterNumber()));
         holder.mChapterTitle.setText(chapter.getTitle());
-        holder.mChapterReleaseDate.setText(chapter.getReleaseDate());
+
+        // Format date
+        Date creationDate = chapter.getCreationDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate = sdf.format(creationDate);
+
+        holder.mChapterReleaseDate.setText(formattedDate);
     }
 
     @Override

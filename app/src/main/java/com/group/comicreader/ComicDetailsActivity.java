@@ -15,20 +15,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.group.comicreader.adapters.ChapterListAdapter;
 import com.group.comicreader.models.Chapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ComicDetailsActivity extends AppCompatActivity {
@@ -83,10 +84,10 @@ public class ComicDetailsActivity extends AppCompatActivity {
         coverImageView = findViewById(R.id.image_details_cover);
         chaptersRecyclerView = findViewById(R.id.recycler_details_chapters);
 
-        // Find ref of comic
-        DocumentReference docRef = firestore.collection("Comic").document(comicID);
         // Query for comic details
-        docRef.get()
+        firestore.collection("Comic")
+                .document(comicID)
+                .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -111,17 +112,30 @@ public class ComicDetailsActivity extends AppCompatActivity {
                     }
                 });
 
-        // Add sample chapters
-        List<Chapter> chapters = new ArrayList<>();
-        chapters.add(new Chapter(1, "Chapter 1 Title", "2022-04-01"));
-        chapters.add(new Chapter(2, "Chapter 2 Title", "2022-04-15"));
-        chapters.add(new Chapter(3, "Chapter 3 Title", "2022-05-01"));
+        // Query for chapters
+        firestore.collection("/Comic/" + comicID + "/Chapter")
+                .orderBy("chapterNumber")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    List<Chapter> chapters = new ArrayList<>();
 
-        // Set up chapters recycler view
-        chapterListAdapter = new ChapterListAdapter(chapters);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        chaptersRecyclerView.setLayoutManager(layoutManager);
-        chaptersRecyclerView.setAdapter(chapterListAdapter);
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            String id = documentSnapshot.getId();
+                            int chapterNumber = documentSnapshot.getLong("chapterNumber").intValue();
+                            String title = documentSnapshot.getString("title");
+                            Date creationDate = documentSnapshot.getTimestamp("creationDate").toDate();
+
+                            Log.d(TAG, "onSuccess: ID of chapter " + chapterNumber + " is " + id);
+                            chapters.add(new Chapter(chapterNumber, title, creationDate));
+                        }
+
+                        // Set up chapters recycler view
+                        chapterListAdapter = new ChapterListAdapter(chapters);
+                        chaptersRecyclerView.setAdapter(chapterListAdapter);
+                    }
+                });
     }
 
     // Show or hide Show more button depending on whether description text is longer than 3 lines

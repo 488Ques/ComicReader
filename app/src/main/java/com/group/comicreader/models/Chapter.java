@@ -1,10 +1,11 @@
 package com.group.comicreader.models;
 
+import java.util.Date;
 import java.util.List;
 
 public class Chapter {
     private int chapterNumber;
-    private String releaseDate;
+    private Date creationDate;
     private String title;
     private List<String> imageUrls;
 
@@ -13,16 +14,16 @@ public class Chapter {
         // Default constructor required for calls to DataSnapshot.getValue(Chapter.class)
     }
 
-    public Chapter(int chapterNumber, String releaseDate, String title, List<String> imageUrls) {
+    public Chapter(int chapterNumber, Date creationDate, String title, List<String> imageUrls) {
         this.chapterNumber = chapterNumber;
-        this.releaseDate = releaseDate;
+        this.creationDate = creationDate;
         this.title = title;
         this.imageUrls = imageUrls;
     }
 
-    public Chapter(int chapterNumber, String title, String releaseDate) {
+    public Chapter(int chapterNumber, String title, Date creationDate) {
         this.chapterNumber = chapterNumber;
-        this.releaseDate = releaseDate;
+        this.creationDate = creationDate;
         this.title = title;
     }
 
@@ -51,11 +52,11 @@ public class Chapter {
         this.imageUrls = imageUrls;
     }
 
-    public String getReleaseDate() {
-        return releaseDate;
+    public Date getCreationDate() {
+        return creationDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 }
