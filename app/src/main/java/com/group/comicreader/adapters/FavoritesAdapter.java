@@ -1,5 +1,6 @@
 package com.group.comicreader.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,19 +11,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.group.comicreader.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder> {
-    private List<String> favoritesComicID;
+    private final String TAG = "FavoritesAdapter";
+    private List<String> favoritesComicID = new ArrayList<>();
     private FirebaseFirestore firestore;
 
-    public FavoritesAdapter(List<String> favoritesComicID, FirebaseFirestore firestore) {
-        this.favoritesComicID = favoritesComicID;
+    public FavoritesAdapter(FirebaseFirestore firestore) {
         this.firestore = firestore;
     }
 
@@ -34,7 +37,6 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         return new ViewHolder(view);
     }
 
-    // TODO: Finish implementing this
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String comicID = favoritesComicID.get(position);
@@ -55,7 +57,12 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
     @Override
     public int getItemCount() {
-        return 0;
+        return favoritesComicID.size();
+    }
+
+    public void setFavoritesComicID(List<String> favoritesComicID) {
+        this.favoritesComicID = favoritesComicID;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
