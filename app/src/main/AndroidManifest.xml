@@ -12,9 +12,6 @@
         android:theme="@style/Theme.ComicReader"
         tools:targetApi="31">
         <activity
-            android:name=".ComicFavoritesActivity"
-            android:exported="false" />
-        <activity
             android:name=".ComicCommentaryActivity"
             android:exported="false" />
         <activity
