@@ -36,13 +36,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private RecyclerView recyclerComicList;
-    private BottomNavigationView bottomNavMain;
-    private ComicListAdapter comicListAdapter;
-    private List<ComicListItem> comicList;
     private ActivityResultLauncher<Intent> signInLauncher;
     private FirebaseAuth mAuth;
-    private FirebaseFirestore mFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,49 +60,17 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        // Set up Firestore
-        mFirestore = FirebaseFirestore.getInstance();
-
         // Start signing in if eligible
         if (shouldStartSignIn()) {
             startSignIn();
         }
 
-        // Find views
-        recyclerComicList = findViewById(R.id.recycler_comic_list);
-        bottomNavMain = findViewById(R.id.bottomnav_main);
+        HomeFragment homeFragment = new HomeFragment();
 
-        bottomNavMain.setSelectedItemId(R.id.bottomnav_home);
-
-        bottomNavMain.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemID = item.getItemId();
-
-                return true;
-            }
-        });
-
-        // Query data
-        comicList = new ArrayList<>();
-        mFirestore.collection("Comic")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        // Populate comicList
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                            String id = documentSnapshot.getId();
-                            String title = documentSnapshot.getString("title");
-                            String imageUrl = documentSnapshot.getString("imageUrl");
-                            comicList.add(new ComicListItem(id, title, imageUrl));
-                        }
-
-                        // Set up adapter and recycler
-                        comicListAdapter = new ComicListAdapter(comicList);
-                        recyclerComicList.setAdapter(comicListAdapter);
-                    }
-                });
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.fragment_container, homeFragment)
+                .commit();
     }
 
     // Launch sign in sequence

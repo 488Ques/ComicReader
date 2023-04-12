@@ -1,5 +1,6 @@
 package com.group.comicreader.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,13 +17,13 @@ import com.group.comicreader.models.Comic;
 import com.group.comicreader.models.ComicListItem;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ComicListAdapter extends RecyclerView.Adapter<ComicListAdapter.ViewHolder> {
-    private List<ComicListItem> comicList;
+    private List<ComicListItem> comicList = new ArrayList<>();
 
-    public ComicListAdapter(List<ComicListItem> comicList) {
-        this.comicList = comicList;
+    public ComicListAdapter() {
     }
 
     @NonNull
@@ -46,7 +47,13 @@ public class ComicListAdapter extends RecyclerView.Adapter<ComicListAdapter.View
         return comicList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    @SuppressLint("NotifyDataSetChanged")
+    public void setComicList(List<ComicListItem> comicList) {
+        this.comicList = comicList;
+        notifyDataSetChanged();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView comicCover;
         public TextView comicTitle;
         public String comicID;
