@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -17,20 +18,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.group.comicreader.adapters.ChapterListAdapter;
 import com.group.comicreader.models.Chapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ComicDetailsActivity extends AppCompatActivity {
     final String TAG = "ComicDetailsActivity";
@@ -38,6 +46,7 @@ public class ComicDetailsActivity extends AppCompatActivity {
 
     private ChapterListAdapter chapterListAdapter;
     private FirebaseFirestore firestore;
+    private FirebaseAuth auth;
 
     private TextView titleTextView;
     private TextView authorTextView;
@@ -46,6 +55,8 @@ public class ComicDetailsActivity extends AppCompatActivity {
     private Button showMoreButton;
     private ImageView coverImageView;
     private RecyclerView chaptersRecyclerView;
+    private String comicID;
+    private boolean isComicFavorited;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,11 +65,14 @@ public class ComicDetailsActivity extends AppCompatActivity {
 
         // Get comicID
         Intent intent = getIntent();
-        String comicID = intent.getStringExtra("comicID");
+        comicID = intent.getStringExtra("comicID");
         Log.d(TAG, "Comic ID is " + comicID);
 
         // Set up Firestore
         firestore = FirebaseFirestore.getInstance();
+
+        // Set up FirebaseAuth
+        auth = FirebaseAuth.getInstance();
 
         // Set up toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_details);
@@ -138,6 +152,113 @@ public class ComicDetailsActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_comic_details, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.menu_favorite);
+
+        isComicFavorited(comicID).addOnCompleteListener(new OnCompleteListener<Boolean>() {
+            @Override
+            public void onComplete(@NonNull Task<Boolean> task) {
+                if (task.isSuccessful()) {
+                    isComicFavorited = task.getResult();
+
+                    if (isComicFavorited) {
+                        menuItem.setIcon(R.drawable.ic_favorite_filled);
+                    } else {
+                        menuItem.setIcon(R.drawable.ic_favorite);
+                    }
+                }
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_favorite) {
+            isComicFavorited = !isComicFavorited;
+
+            if (isComicFavorited) {
+                item.setIcon(R.drawable.ic_favorite_filled);
+                addToFavorites(comicID);
+            } else {
+                item.setIcon(R.drawable.ic_favorite);
+                removeFromFavorites(comicID);
+            }
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private Task<Boolean> isComicFavorited(String comicID) {
+        String userID = auth.getCurrentUser().getUid();
+
+        return firestore.collection("User")
+                .document(userID)
+                .get()
+                .continueWith(new Continuation<DocumentSnapshot, Boolean>() {
+                    @Override
+                    public Boolean then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            if (documentSnapshot.exists()) {
+                                List<String> favorites = (List<String>) documentSnapshot.get("favorites");
+
+                                return favorites != null && favorites.contains(comicID);
+                            }
+                        }
+                        return false;
+                    }
+                });
+    }
+
+    private void addToFavorites(String comicID) {
+        String userID = auth.getCurrentUser().getUid();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("favorites", FieldValue.arrayUnion(comicID));
+
+        firestore.collection("User")
+                .document(userID)
+                .set(data, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d(TAG, "onSuccess: Add comic " + comicID + " to Favorites.");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "onFailure: Failed to add comic " + comicID + " to Favorites.", e);
+                    }
+                });
+    }
+
+    private void removeFromFavorites(String comicID) {
+        String userID = auth.getCurrentUser().getUid();
+
+        firestore.collection("User")
+                .document(userID)
+                .update("favorites", FieldValue.arrayRemove(comicID))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d(TAG, "onSuccess: Remove comic " + comicID + " from Favorites.");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "onFailure: Failed to remove comic " + comicID + " from Favorites.", e);
+                    }
+                });
+    }
+
     // Show or hide Show more button depending on whether description text is longer than 3 lines
     private void showMoreIfOk() {
         ViewTreeObserver observer = descriptionTextView.getViewTreeObserver();
@@ -174,11 +295,5 @@ public class ComicDetailsActivity extends AppCompatActivity {
                 descriptionTextView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_comic_details, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 }
