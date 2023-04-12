@@ -5,6 +5,11 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
@@ -65,12 +70,52 @@ public class MainActivity extends AppCompatActivity {
             startSignIn();
         }
 
-        HomeFragment homeFragment = new HomeFragment();
+        // Handle bottom navigation view event
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomnav_main);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment selectedFragment = null;
+                String fragmentTag = null;
+                switch (item.getItemId()) {
+                    case R.id.bottomnav_home:
+                        fragmentTag = "HomeFragment"; // set a unique tag for HomeFragment
+                        break;
+                    case R.id.bottomnav_favorites:
+                        fragmentTag = "FavoritesFragment"; // set a unique tag for FavoritesFragment
+                        break;
+                }
 
-        getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.fragment_container, homeFragment)
-                .commit();
+                // Check if the fragment is already added to the fragment_container
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                Fragment existingFragment = fragmentManager.findFragmentByTag(fragmentTag);
+                if (existingFragment != null) {
+                    // If fragment already exists, use it
+                    selectedFragment = existingFragment;
+                } else {
+                    // If fragment does not exist, create a new instance
+                    switch (item.getItemId()) {
+                        case R.id.bottomnav_home:
+                            selectedFragment = new HomeFragment();
+                            break;
+                        case R.id.bottomnav_favorites:
+                            selectedFragment = new FavoritesFragment();
+                            break;
+                    }
+                }
+
+                // Replace the fragment in the fragment_container
+                if (selectedFragment != null) {
+                    fragmentManager.beginTransaction().replace(R.id.fragment_container, selectedFragment, fragmentTag).commit();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        // Manually select the default item
+        bottomNavigationView.setSelectedItemId(R.id.bottomnav_home);
     }
 
     // Launch sign in sequence
