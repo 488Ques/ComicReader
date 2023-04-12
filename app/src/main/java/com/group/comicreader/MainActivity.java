@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -23,6 +22,8 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -35,7 +36,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private RecyclerView recycler_comic_list;
+    private RecyclerView recyclerComicList;
+    private BottomNavigationView bottomNavMain;
     private ComicListAdapter comicListAdapter;
     private List<ComicListItem> comicList;
     private ActivityResultLauncher<Intent> signInLauncher;
@@ -72,7 +74,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Find views
-        recycler_comic_list = findViewById(R.id.recycler_comic_list);
+        recyclerComicList = findViewById(R.id.recycler_comic_list);
+        bottomNavMain = findViewById(R.id.bottomnav_main);
+
+        bottomNavMain.setSelectedItemId(R.id.bottomnav_home);
+
+        bottomNavMain.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemID = item.getItemId();
+
+                return true;
+            }
+        });
 
         // Query data
         comicList = new ArrayList<>();
@@ -91,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // Set up adapter and recycler
                         comicListAdapter = new ComicListAdapter(comicList);
-                        recycler_comic_list.setAdapter(comicListAdapter);
+                        recyclerComicList.setAdapter(comicListAdapter);
                     }
                 });
     }

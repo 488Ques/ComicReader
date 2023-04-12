@@ -9,16 +9,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.group.comicreader.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder> {
-    private List<String> favorites;
+    private List<String> favoritesComicID;
+    private FirebaseFirestore firestore;
 
-    public FavoritesAdapter(List<String> favorites) {
-        this.favorites = favorites;
+    public FavoritesAdapter(List<String> favoritesComicID, FirebaseFirestore firestore) {
+        this.favoritesComicID = favoritesComicID;
+        this.firestore = firestore;
     }
 
     @NonNull
@@ -32,7 +37,20 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
     // TODO: Finish implementing this
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String comicID = favorites.get(position);
+        String comicID = favoritesComicID.get(position);
+
+        firestore.collection("Comic").document(comicID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String imageUrl = documentSnapshot.getString("imageUrl");
+                        String title = documentSnapshot.getString("title");
+                        String author = documentSnapshot.getString("author");
+
+                        holder.Bind(imageUrl, title, author);
+                    }
+                });
     }
 
     @Override

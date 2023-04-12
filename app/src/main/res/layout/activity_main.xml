@@ -24,6 +24,7 @@
         app:spanCount="3" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomnav_main"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="@color/bottom_nav_bg"
