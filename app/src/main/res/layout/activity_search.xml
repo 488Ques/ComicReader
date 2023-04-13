@@ -13,28 +13,30 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
+
         <EditText
             android:id="@+id/edittext_search"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
             android:layout_margin="8dp"
-            android:inputType="text"
-            android:elevation="4dp"
-            android:padding="4dp"
+            android:layout_weight="3"
             android:background="@drawable/custom_bg_search"
             android:drawableLeft="@drawable/ic_search"
-            android:hint="Tìm Kiếm..."
-            android:imeOptions="actionDone" />
+            android:elevation="4dp"
+            android:hint="Search..."
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:padding="4dp" />
+
         <Button
             android:id="@+id/button_cancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
+            android:background="@drawable/custom_bg_search"
+            android:hint="Cancel"
             android:padding="3dp"
-            android:hint="Hủy"
-            android:textColorHint="@color/black"
-            android:background="@drawable/custom_bg_search"/>
+            android:textColorHint="@color/black" />
 
     </LinearLayout>
 
@@ -43,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/linearlayout_search"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="3" />
 
 </RelativeLayout>

@@ -52,7 +52,7 @@ public class SearchActivity extends AppCompatActivity {
         comicListAdapter = new ComicListAdapter();
         recyclersearchcomic.setAdapter(comicListAdapter);
 
-        //
+        // Handle cancel button's event
         button_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,8 +80,7 @@ public class SearchActivity extends AppCompatActivity {
     }
     private void searchComic(String query) {
         comicList_search = new ArrayList<>();
-        CollectionReference comicRef = FirebaseFirestore.getInstance().collection("Comic");
-        //Query searchQuery = comicRef.whereEqualTo("title", query);
+        CollectionReference comicRef = firestore.collection("Comic");
         Query searchQuery = comicRef.whereGreaterThanOrEqualTo("title", query)
                 .whereLessThanOrEqualTo("title", query + "\uf8ff");
 
