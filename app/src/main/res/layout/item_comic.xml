@@ -7,7 +7,9 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:minHeight="48dp"
+    android:minWidth="48dp">
 
     <ImageView
         android:id="@+id/image_comic_cover"

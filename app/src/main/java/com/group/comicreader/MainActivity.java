@@ -166,43 +166,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.menu_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                searchComic(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
         return true;
-    }
-
-    private void searchComic(String query) {
-        CollectionReference comicRef = FirebaseFirestore.getInstance().collection("Comic");
-//        Query searchQuery = comicRef.whereEqualTo("title", query);
-        Query searchQuery = comicRef.whereGreaterThanOrEqualTo("title", query)
-                .whereLessThanOrEqualTo("title", query + "\uf8ff");
-
-        searchQuery.get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                            Log.d(TAG, "onSuccess: Found");
-                        } else {
-                            Log.d(TAG, "onSuccess: No result");
-                        }
-                    }
-                });
     }
 
     @Override
@@ -211,6 +175,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_sign_out:
                 signOut();
                 return true;
+            case R.id.menu_search:
+                Intent intent =new Intent(this,SearchActivity.class);
+                startActivity(intent);
         }
         return false;
     }
